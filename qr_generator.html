@@ -52,23 +52,20 @@
             text-align: center;
         }
 
-        /* Header Area */
-        .icon-wrapper {
-            background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
+        /* Custom Logo Area */
+        .logo-wrapper {
+            margin: 0 auto 20px auto;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 20px auto;
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
         }
 
-        .icon-wrapper svg {
-            width: 35px;
-            height: 35px;
-            fill: white;
+        .logo-wrapper img {
+            width: 90px; /* Adjust size as needed */
+            height: auto;
+            border-radius: 16px;
+            /* Subtle theme-matching glow */
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
         }
 
         h1 {
@@ -198,10 +195,8 @@
 <body>
 
     <div class="container">
-        <div class="icon-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2zm0 2.84L19.5 12H19v7h-2v-6H7v6H5v-7h-.5L12 4.84z"/>
-            </svg>
+        <div class="logo-wrapper">
+            <img src="qin.png" alt="Q-In Logo">
         </div>
 
         <h1>Geo-Fenced QR</h1>

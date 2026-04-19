@@ -1,44 +1,261 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Smart Attendance QR</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q-In Admin | Secure QR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f9; }
-        input { padding: 10px; font-size: 18px; width: 250px; }
-        button { padding: 10px 20px; font-size: 18px; background-color: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        #status { margin-top: 10px; color: #555; }
-        img { margin-top: 20px; border: 5px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        /* ====================================================
+           🎨 Q-IN PREMIUM DARK THEME
+           ==================================================== */
+        :root {
+            --bg-color: #0F172A;
+            --card-bg: #1E293B;
+            --grad-start: #3B82F6;
+            --grad-end: #8B5CF6;
+            --accent: #10B981;
+            --danger: #EF4444;
+            --text-white: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at top left, rgba(59, 130, 246, 0.1), transparent 40%),
+                              radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.1), transparent 40%);
+            color: var(--text-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Card */
+        .container {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        /* Header Area */
+        .icon-wrapper {
+            background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .icon-wrapper svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 35px;
+        }
+
+        /* Input Field */
+        .input-group {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            background: var(--bg-color);
+            color: var(--text-white);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--grad-start);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Generate Button */
+        button {
+            width: 100%;
+            background: linear-gradient(to right, var(--grad-start), var(--grad-end));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* Status & Error Text */
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+            height: 20px; /* Prevent layout shift */
+        }
+
+        .error { color: var(--danger) !important; }
+        .success { color: var(--accent) !important; }
+
+        /* QR Code Display */
+        #qr-container {
+            margin-top: 30px;
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        #qr-container img {
+            background: white; /* Strict white background for scanner reliability */
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 250px;
+            height: 250px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Spinner for button */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
 
-    <h1>📍 Geo-Fenced Attendance</h1>
-    <input type="text" id="subject" placeholder="Enter Subject (e.g., CS301)">
-    <br><br>
-    <button onclick="getLocAndGenerate()">Generate Secure QR</button>
-    <p id="status">Waiting for location...</p>
-    <div id="qr-container"></div>
+    <div class="container">
+        <div class="icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2zm0 2.84L19.5 12H19v7h-2v-6H7v6H5v-7h-.5L12 4.84z"/>
+            </svg>
+        </div>
+
+        <h1>Geo-Fenced QR</h1>
+        <p class="subtitle">Generate secure classroom attendance tokens.</p>
+
+        <div class="input-group">
+            <label for="subject">Course Code</label>
+            <input type="text" id="subject" placeholder="e.g., CS301" autocomplete="off" onkeypress="handleEnter(event)">
+        </div>
+
+        <button id="generate-btn" onclick="getLocAndGenerate()">
+            <span id="btn-text">Generate Secure Token</span>
+        </button>
+        
+        <p id="status">Ready to deploy</p>
+
+        <div id="qr-container"></div>
+    </div>
 
     <script>
-        function getLocAndGenerate() {
-            var subjectInput = document.getElementById("subject").value.trim();
-            if (!subjectInput) { alert("Enter subject!"); return; }
+        function handleEnter(e) {
+            if (e.key === 'Enter') getLocAndGenerate();
+        }
 
-            document.getElementById("status").innerText = "Getting your GPS location...";
+        function getLocAndGenerate() {
+            var subjectInput = document.getElementById("subject").value.trim().toUpperCase();
+            var statusEl = document.getElementById("status");
+            var btnText = document.getElementById("btn-text");
+            
+            if (!subjectInput) { 
+                statusEl.innerText = "⚠️ Please enter a course code.";
+                statusEl.className = "error";
+                return; 
+            }
+
+            // UI Loading State
+            statusEl.innerText = "Acquiring GPS Lock...";
+            statusEl.className = "";
+            btnText.innerHTML = "<div class='loader'></div>";
+            document.getElementById("qr-container").style.display = "none";
 
             if (navigator.geolocation) {
-                // We just ask for location here. The "showQR" function will handle the rest.
-                navigator.geolocation.getCurrentPosition(showQR, showError);
+                navigator.geolocation.getCurrentPosition(showQR, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
             } else {
-                document.getElementById("status").innerText = "Geolocation is not supported by this browser.";
+                showError({ message: "Geolocation is not supported by this browser." });
             }
         }
 
         function showQR(position) {
-            // FIX IS HERE: We get the value INSIDE this function
-            var subject = document.getElementById("subject").value.trim();
-            
+            var subject = document.getElementById("subject").value.trim().toUpperCase();
             var lat = position.coords.latitude;
             var lng = position.coords.longitude;
             var now = new Date();
@@ -50,18 +267,28 @@
             var timeTs = now.getTime(); 
 
             // DATA FORMAT: Subject | Date | Timestamp | Lat | Lng
-            // Now "subject" is a text string, not the [object HTMLInputElement]
             var secretString = `${subject}|${dateStr}|${timeTs}|${lat}|${lng}`;
             
-            // Generate QR
-            var url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(secretString);
+            // Generate QR via API
+            var url = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=10&data=" + encodeURIComponent(secretString);
             
-            document.getElementById("qr-container").innerHTML = `<img src="${url}">`;
-            document.getElementById("status").innerText = `Generated for ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            // Update UI
+            document.getElementById("qr-container").innerHTML = `<img src="${url}" alt="Attendance QR Code">`;
+            document.getElementById("qr-container").style.display = "block";
+            
+            document.getElementById("status").innerText = `✓ Live Token Active • Accuracy: ${position.coords.accuracy.toFixed(0)}m`;
+            document.getElementById("status").className = "success";
+            document.getElementById("btn-text").innerText = "Generate Secure Token";
         }
 
         function showError(error) {
-            document.getElementById("status").innerText = "Error: " + error.message;
+            var msg = "Location access denied.";
+            if(error.code === 2) msg = "Position unavailable. Check GPS.";
+            if(error.code === 3) msg = "Request timed out.";
+            
+            document.getElementById("status").innerText = "⚠️ " + msg;
+            document.getElementById("status").className = "error";
+            document.getElementById("btn-text").innerText = "Generate Secure Token";
         }
     </script>
 
